@@ -30,6 +30,26 @@ def get_tasks():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        # check if username already exists in db:
+        existing_user = mongo.db.users.find_one(
+            {"username": request.form.get("username").lower()})
+
+        if existing_user:
+            flash("Username already exists")
+            # redirecting user if username already taken:
+            return redirect(url_for("register"))
+
+        register = { # actions as 'else' if no existing user is found
+            "username": request.form.get("username").lower(), # dictionary items to store in DB
+            "password": generate_password_hash(request.form.get("password"))
+        }
+        mongo.db.users.insert_one(register) # inserting dict as variable to db
+
+        # put the new user into 'session' cookie
+        session["user"] = request.form.get("username").lower()
+        flash("Registration successfull!")
+
     return render_template("register.html")
 
 
