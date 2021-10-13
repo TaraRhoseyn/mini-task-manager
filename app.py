@@ -3,6 +3,7 @@ from flask import (
     Flask, flash, render_template, redirect, request, session, url_for)
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from werkzeug.security import generate_password_hash, check_password_hash
 if os.path.exists("env.py"):
     import env
 
@@ -24,6 +25,12 @@ def get_tasks():
     # grabs tasks from 'tasks' collection
     # and assigns them to the 'tasks' variable on L22 >
     return render_template("tasks.html", tasks=tasks)
+
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return render_template("register.html")
 
 
 # telling app how & where to run app
