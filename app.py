@@ -126,8 +126,28 @@ def add_task():
 def edit_task(task_id):
     # using bson.objectid (imported at top of file)
     # below is very similar function to the .get() method
-    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)}) 
-    return render_template("edit_task.html", task=task)
+    if request.method == "POST":
+        # checkboxs like 'is_urgent' need a ternary operator 
+        # to make a truthy statement:
+        is_urgent = "on" if request.form.get("is_urgent") else "off"
+        submit_tasks = {
+            # key = 'name'
+            # in HTML form element, value is the 'get' method (retrieved from user)
+            # to store an array (like multiselect form element = .getlist()
+            "task_name": request.form.get("task_name"),
+            "task_description": request.form.get("task_description"),
+            "is_urgent": is_urgent,
+            "due_name": request.form.get("due_date"),
+            "created_by": session["user"]
+        }
+        # search for task in database coming from root
+        # will then update that task with submit_task dictionary
+        # which contains form elements data
+        mongo.db.tasks.update({"_id": ObjectId(task_id)}, submit_tasks)
+        flash("Task successfully updated")
+
+        task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+        return render_template("edit_task.html", task=task)
 
 
 if __name__ == "__main__":
