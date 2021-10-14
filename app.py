@@ -100,8 +100,25 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/add_task")
+@app.route("/add_task", methods=["GET", "POST"])
 def add_task():
+    if request.method == "POST":
+        # checkboxs like 'is_urgent' need a ternary operator to make a truthy statement:
+        is_urgent = "on" if request.form.get("is_urgent") else "off"
+        task = {
+            # key = 'name' 
+            # in HTML form element, value is the 'get' method (retrieved from user)
+            # to store an array (like multiselect form element = .getlist()
+            "task_name": request.form.get("task_name"),
+            "task_description": request.form.get("task_description"),
+            "is_urgent": is_urgent,
+            "due_name": request.form.get("due_date"),
+            "created_by": session["user"]
+        }
+        mongo.db.tasks.insert_one(task)
+        flash("Task successfully added")
+        return redirect(url_for("get_tasks"))
+        
     return render_template("add_task.html")
 
 if __name__ == "__main__":

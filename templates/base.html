@@ -29,7 +29,7 @@
                 {% else %}
                     <li><a href="{{ url_for('login') }}">Log In</a></li>
                     <li><a href="{{ url_for('register') }}">Register</a></li>
-                {% end if %}
+                {% endif %}
 				</ul>
 			</div>
 		</nav>
@@ -46,7 +46,7 @@
             {% else %}
                 <li><a href="{{ url_for('login') }}">Log In</a></li>
                 <li><a href="{{ url_for('register') }}">Register</a></li>
-            {% end if %}
+            {% endif %}
 		</ul>
     </header>
 
